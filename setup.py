@@ -2,24 +2,24 @@ import cv2 as cv
 import numpy as np
 from matplotlib import pyplot as plt
 
-img = cv.imread('img/rock.jpg')
+img = cv.imread('img/cookies.jpg')
 
 color = cv.cvtColor(img, cv.COLOR_BGR2RGB)
 gray = cv.cvtColor(img, cv.COLOR_BGR2GRAY)
 
 # using global threshold to make sure between bg and fg
-ret, thresh = cv.threshold(gray, 212, 255, cv.THRESH_BINARY_INV)
+ret, thresh = cv.threshold(gray, 136, 255, cv.THRESH_BINARY_INV)
 
 # cleaning some noises
-kernel = np.ones((6, 6), np.uint8)
-opening = cv.morphologyEx(thresh, cv.MORPH_OPEN, kernel, iterations = 5)
+kernel = np.ones((8, 8), np.uint8)
+opening = cv.morphologyEx(thresh, cv.MORPH_OPEN, kernel, iterations = 7)
 
 # to make sure where the bg with dilate
-bg = cv.dilate(opening, kernel, iterations = 8)
+bg = cv.dilate(opening, kernel, iterations = 9)
 
 # same as bg but with erode
-fg = cv.erode(opening, kernel, iterations = 3)
-ret, fg = cv.threshold(fg, 0.9 * fg.max(), 255, 0)
+fg = cv.erode(opening, kernel, iterations = 7)
+ret, fg = cv.threshold(fg, 0.6 * fg.max(), 255, 0)
 fg = np.uint8(fg)
 
 # to know unknown markers
@@ -31,9 +31,9 @@ markers[unknown == 255] = 1
 
 # whatershed method
 markers = cv.watershed(color, markers)
-color[markers == 1] = [255, 0, 0]
+color[markers == 1] = [0, 255, 0]
 
-plt.figure('Original')
+plt.figure('Final')
 plt.imshow(color)
 
 plt.figure('Grayscale')
